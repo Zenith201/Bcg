@@ -31,5 +31,11 @@ public class RequestController {
     }
 
 
+    @GetMapping("/test")
+    public String test(){
+        return "everything is OK :)";
+    }
+
+
 
 }

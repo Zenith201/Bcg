@@ -26,7 +26,7 @@ public class RequestController {
     }
 
     @GetMapping("/items/{id}")
-    public String searchItems(@PathVariable("id")String id){
+    public String getItemById(@PathVariable("id")String id){
         return helper.getItemById(id);
     }
 

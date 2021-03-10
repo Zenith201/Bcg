@@ -27,7 +27,7 @@ public class ItemHelper {
             try {
                 Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
                 final Connection connection = DriverManager.getConnection("jdbc:sqlserver://boston-solutions.database.windows.net:1433;database=bcg;encrypt=true;trustServerCertificate=true;", "zane", "takougoum2001NANA");
-                final PreparedStatement statement = connection.prepareStatement("select Top (10) from bcg.items where category='"+category+"'");
+                final PreparedStatement statement = connection.prepareStatement("select Top (10) * from bcg.items where category like '"+category+"'");
                 ResultSet resultSet=statement.executeQuery();
                 while (resultSet.next())
                     items.add(new Item(resultSet.getString("id"),resultSet.getString("name"),resultSet.getString("unit_price")
@@ -56,7 +56,7 @@ public class ItemHelper {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             final Connection connection = DriverManager.getConnection("jdbc:sqlserver://boston-solutions.database.windows.net:1433;database=bcg;encrypt=true;trustServerCertificate=true;", "zane", "takougoum2001NANA");
-            final PreparedStatement statement = connection.prepareStatement("select Top (35) from bcg.items where category='"+category+"'");
+            final PreparedStatement statement = connection.prepareStatement("select Top (35) * from bcg.items where category='"+category+"'");
             ResultSet resultSet=statement.executeQuery();
             while (resultSet.next())
                 items.add(new Item(resultSet.getString("id"),resultSet.getString("name"),resultSet.getString("unit_price")

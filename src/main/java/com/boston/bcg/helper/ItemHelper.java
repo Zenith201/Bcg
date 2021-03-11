@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class ItemHelper {
 
    private static ItemHelper instance;
-   static final String GET_ALL="select * from bcg.items",PREVIEW_SCHOOL_MATERIALS="select Top (10) from bcg.items where category='school'";
+   static final String GET_ALL_PREVIEW="(select * from  getOfficeItemsPreview()) Union (select * from  getSchoolItemsPreview()) union (select * from getItItemsPreview()) union (select * from getPrintingItemsPreview())";
 
     public static ItemHelper getInstance() {
         if (instance==null)
@@ -144,6 +144,36 @@ public class ItemHelper {
         response.put("time_stamp",new Date().toLocaleString());
         response.put("status","success");
         response.put("data",item);
+        response.put("cause",null);
+
+        return new Gson().toJson(response);
+    }
+
+    public  String getItemsFeed(){
+        HashMap<String,Object> response=new HashMap<>();
+        ArrayList<Item>items=new ArrayList<>();
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            final Connection connection = DriverManager.getConnection("jdbc:sqlserver://boston-solutions.database.windows.net:1433;database=bcg;encrypt=true;trustServerCertificate=true;", "zane", "takougoum2001NANA");
+
+            PreparedStatement statement = connection.prepareStatement(GET_ALL_PREVIEW);
+            ResultSet resultSet=statement.executeQuery();
+            while (resultSet.next())
+                items.add(new Item(resultSet.getString("id"),resultSet.getString("name"),resultSet.getString("unit_price")
+                        ,resultSet.getString("gross_price"),resultSet.getString("description"),resultSet.getString("category")));
+            connection.close();
+            statement.close();
+        }
+        catch (Exception e) {
+            response.put("time_stamp", new Date().toLocaleString());
+            response.put("status","error");
+            response.put("cause",e.getMessage());
+            return new Gson().toJson(response);
+        }
+
+        response.put("time_stamp",new Date().toLocaleString());
+        response.put("status","success");
+        response.put("data",items);
         response.put("cause",null);
 
         return new Gson().toJson(response);

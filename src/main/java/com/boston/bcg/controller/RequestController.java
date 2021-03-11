@@ -25,9 +25,14 @@ public class RequestController {
         return helper.searchItems(query,Integer.parseInt(set));
     }
 
-    @GetMapping("/items/{id}")
+    @GetMapping("/item/{id}")
     public String getItemById(@PathVariable("id")String id){
         return helper.getItemById(id);
+    }
+
+    @GetMapping("/feed")
+    public String getItemsFeed(){
+        return helper.getItemsFeed();
     }
 
 

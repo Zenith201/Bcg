@@ -8,6 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 public class ItemHelper {
 
@@ -151,16 +152,38 @@ public class ItemHelper {
 
     public  String getItemsFeed(){
         HashMap<String,Object> response=new HashMap<>();
-        ArrayList<Item>items=new ArrayList<>();
+        List<Item> school=new ArrayList<>(),office=new ArrayList<>(),iT=new ArrayList<>(),printing=new ArrayList<>();
+        ArrayList<List<Item>>overAllList=new ArrayList<>();
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             final Connection connection = DriverManager.getConnection("jdbc:sqlserver://boston-solutions.database.windows.net:1433;database=bcg;encrypt=true;trustServerCertificate=true;", "zane", "takougoum2001NANA");
 
             PreparedStatement statement = connection.prepareStatement(GET_ALL_PREVIEW);
             ResultSet resultSet=statement.executeQuery();
-            while (resultSet.next())
-                items.add(new Item(resultSet.getString("id"),resultSet.getString("name"),resultSet.getString("unit_price")
-                        ,resultSet.getString("gross_price"),resultSet.getString("description"),resultSet.getString("category")));
+            while (resultSet.next()){
+                switch (resultSet.getString("category")){
+                    case "school":
+                        school.add(new Item(resultSet.getString("id"),resultSet.getString("name"),resultSet.getString("unit_price")
+                                ,resultSet.getString("gross_price"),resultSet.getString("description"),resultSet.getString("category")));
+                                break;
+                    case "IT":
+                        iT.add(new Item(resultSet.getString("id"),resultSet.getString("name"),resultSet.getString("unit_price")
+                                ,resultSet.getString("gross_price"),resultSet.getString("description"),resultSet.getString("category")));
+                        break;
+                    case "office":
+                        office.add(new Item(resultSet.getString("id"),resultSet.getString("name"),resultSet.getString("unit_price")
+                                ,resultSet.getString("gross_price"),resultSet.getString("description"),resultSet.getString("category")));
+                        break;
+                    case "printing":
+                        printing.add(new Item(resultSet.getString("id"),resultSet.getString("name"),resultSet.getString("unit_price")
+                                ,resultSet.getString("gross_price"),resultSet.getString("description"),resultSet.getString("category")));
+                        break;
+                }
+            }
+            overAllList.add(school);
+            overAllList.add(office);
+            overAllList.add(printing);
+            overAllList.add(iT);
             connection.close();
             statement.close();
         }
@@ -173,7 +196,7 @@ public class ItemHelper {
 
         response.put("time_stamp",new Date().toLocaleString());
         response.put("status","success");
-        response.put("data",items);
+        response.put("data",overAllList);
         response.put("cause",null);
 
         return new Gson().toJson(response);
